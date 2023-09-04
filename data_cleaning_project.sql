@@ -243,29 +243,13 @@ FROM nashvillehousingdatafordatacleaning;
 
 
 
--- ( Will try to understand this too)
--- DELETE n
--- FROM nashvillehousing_backup n
--- LEFT JOIN (
---     SELECT *,
---            ROW_NUMBER() OVER (PARTITION BY ParcelID, PropertyAddress, SalePrice, SaleDate, LegalReference
---                              ORDER BY UniqueID) AS row_num
---     FROM nashvillehousing_backup
--- ) AS RowNumCTE ON n.ParcelID = RowNumCTE.ParcelID
---               AND n.PropertyAddress = RowNumCTE.PropertyAddress
---               AND n.SalePrice = RowNumCTE.SalePrice
---               AND n.SaleDate = RowNumCTE.SaleDate
---               AND n.LegalReference = RowNumCTE.LegalReference
---               AND n.UniqueID = RowNumCTE.UniqueID
--- WHERE RowNumCTE.row_num > 1;
--- --------------------------------------------------------------------------------
 
 
 -- Unfortunatley Mysql doesnt allow to directly update or delete in CTEs 
 -- so we will be using the CTE as a subquery in the query below to delete from original table instead.
 
 
--- Testing:
+-- Testing: (this isn't part of the final implementation)
 -- SELECT ParcelID, PropertyAddress, SalePrice, SaleDate, LegalReference, MIN(UniqueID) AS min_unique_id
 -- FROM nashvillehousingdatafordatacleaning
 -- HAVING COUNT(*) > 1
@@ -277,53 +261,11 @@ SELECT * FROM nashvillehousingdatafordatacleaning;
 SELECT COUNT(*) AS total_entries
 FROM nashvillehousing_backup_2;
 
--- I understand this delete query better. ( VERY EASY TO UNDERSTAND)----------------------------------------------------
-DELETE n
-FROM nashvillehousing_backup_2 n
-LEFT JOIN (
-    SELECT *,
-           ROW_NUMBER() OVER (PARTITION BY ParcelID, PropertyAddress, SalePrice, SaleDate, LegalReference
-                             ORDER BY UniqueID) AS row_num
-    FROM nashvillehousing_backup_2
-) AS RowNumCTE ON n.ParcelID = RowNumCTE.ParcelID
-              AND n.PropertyAddress = RowNumCTE.PropertyAddress
-              AND n.SalePrice = RowNumCTE.SalePrice
-              AND n.SaleDate = RowNumCTE.SaleDate
-              AND n.LegalReference = RowNumCTE.LegalReference
-              AND n.UniqueID = RowNumCTE.UniqueID
-WHERE RowNumCTE.row_num > 1;
+
 -- -----------------------------------------------------------------------------------------------------------------
-SELECT COUNT(*) AS total_entries
-FROM nashvillehousingdatafordatacleaning;
-
-CREATE TABLE nashvillehousing_backup_3 AS
-SELECT * FROM nashvillehousingdatafordatacleaning;
 
 
--- SELECT n.*, RowNumCTE.row_num
--- FROM nashvillehousing_backup_3  n
--- LEFT JOIN (
---     SELECT *,
---            ROW_NUMBER() OVER (PARTITION BY ParcelID, PropertyAddress, SalePrice, SaleDate, LegalReference
---                              ORDER BY UniqueID) AS row_num
---     FROM nashvillehousing_backup_3 
--- ) AS RowNumCTE ON n.ParcelID = RowNumCTE.ParcelID
---               AND n.PropertyAddress = RowNumCTE.PropertyAddress
---               AND n.SalePrice = RowNumCTE.SalePrice
---               AND n.SaleDate = RowNumCTE.SaleDate
---               AND n.LegalReference = RowNumCTE.LegalReference
---               AND n.UniqueID = RowNumCTE.UniqueID
--- WHERE RowNumCTE.row_num > 1;
 
-
--- deleting the duplicate entires from the dataset:
-CREATE TABLE nashvillehousing_backup4 AS
-SELECT * FROM nashvillehousingdatafordatacleaning;
-
-SELECT * FROM nashvillehousing_backup4;
-
-SELECT COUNT(*) AS total_entries
-FROM nashvillehousing_backup4;
 
 
 SELECT COUNT(*) AS total_entries
