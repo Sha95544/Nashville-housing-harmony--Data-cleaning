@@ -1,4 +1,4 @@
-# Nashville Housing Harmony 
+# Nashville Housing Harmony: A data cleaning project in SQL
 
 ```sql
 USE housingdata;
